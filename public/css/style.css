@@ -3,3 +3,54 @@
   width: 100%;
   height: 30px;
 }
+
+#dash {
+  width: 100%;
+  height: 100px;
+  padding-left: 2em;
+}
+
+#postBox {
+  padding-left: 2em;
+}
+
+div.posts {
+  margin-bottom: 1em;
+}
+
+.thumbnails {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  margin-right: 1em;
+  float: left;
+}
+
+h1 {
+  font-size: 250%;
+}
+
+p {
+  font-family: 'Open Sans',sans-serif;
+  margin-bottom: 3px;
+
+}
+
+p.title {
+  font-weight: 900;
+}
+
+p.subreddit {
+  font-weight: 200;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+p.score {
+  font-weight: 300;
+}
+
+
+
+
+

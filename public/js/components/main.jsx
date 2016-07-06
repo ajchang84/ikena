@@ -1,14 +1,24 @@
 var Post = React.createClass({
   render(){
     return (
-      <li>Title: {this.props.title} Score: {this.props.score}</li>
+      <div className='posts'>
+          <img className='thumbnails' 
+               src={this.props.thumbnail}
+               href='www.google.com' 
+          />
+          <div className='block'>
+            <p className='title'>{this.props.title}</p>
+            <p className='subreddit'>{this.props.subreddit}</p> 
+            <p className='score'>{this.props.score} comments: {this.props.num_comments}</p>
+          </div>
+        </div>
   )}
 });
 
 var Category = React.createClass({
   render(){
     return (
-      <p>All Posts</p>
+      <p className="lead">All Posts</p>
   )}
 });
 
@@ -19,20 +29,23 @@ var PostsBox = React.createClass({
       posts.push(
         <Post 
           title={post.data.title} 
-          score={post.data.score} 
+          score={post.data.score}
+          thumbnail={post.data.thumbnail} 
+          subreddit={post.data.subreddit}
+          num_comments={post.data.num_comments}
           key={index}
         />
       );
     });
 
     return (
-      <div>
+      <div id="postBox">
         <Category />
-        <ul>{posts}</ul>
+        <div>{posts}</div>
       </div>
     )
   }
-})
+});
 
 var Nav = React.createClass({
   render(){
@@ -42,10 +55,21 @@ var Nav = React.createClass({
   }
 });
 
-var Container = React.createClass({
+var Dash = React.createClass({
+  render(){
+    return (
+      <div id="dash">
+        <h1>FRONT</h1>
+      </div>
+    )
+  }
+});
+
+var Root = React.createClass({
   getInitialState(){
     return {
-      posts: []
+      posts: [],
+      readingPosts: false
     }
   },
   componentWillMount(){
@@ -60,10 +84,12 @@ var Container = React.createClass({
     return (
       <div>
         <Nav />
+        <Dash />
+        <hr />
         <PostsBox posts={this.state.posts}/>
       </div>
     )
   }
 });   
 
-ReactDOM.render(<Container />, document.getElementById("container"))
+ReactDOM.render(<Root />, document.getElementById("root"))
