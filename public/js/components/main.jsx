@@ -25,12 +25,13 @@ var Category = React.createClass({
 });
 
 var ThreadBox = React.createClass({
-
   render(){
     if (this.props.thread[0]) {
       return (
         <div id='threadBox'>
         <Content content={this.props.thread[0].data.children[0].data} />
+        <Comments comments={this.props.thread[1].data.children} tier={1} />
+        <Force comments={this.props.thread[1].data.children} />
         </div>
       )  
     }
@@ -41,11 +42,13 @@ var ThreadBox = React.createClass({
 var Content = React.createClass({
 
   render(){
-      console.log(this.props.content.url)
+    console.log(this.props.content.url)
     return (
       <div>
         <h2>{this.props.content.title}</h2>
-        <img src={this.props.content.url} />
+        <div id='display'>
+          <img src={this.props.content.url} />
+        </div>
       </div>
     )
   }
@@ -53,17 +56,57 @@ var Content = React.createClass({
 
 var Comments = React.createClass({
   render(){
+    var comments = '';
+      comments = this.props.comments.map(function(comment, index) {
+        if (comment.kind !== 'more') {
+          if (comment.data.replies && this.props.tier < 3) {
+            var tier = this.props.tier;
+            tier++;
+            return (
+              <div key={index}>
+                <p>Comment Tier: {this.props.tier} </p>
+                <p>{comment.data.author} | {comment.data.score}</p>
+                <p>{comment.data.body}</p>
+                <Comments 
+                  comments={comment.data.replies.data.children}
+                  tier={tier}
+                />
+              </div>
+            );     
+          }
+          else {
+              return (
+                <div key={index}>
+                  <p>Comment Tier: {this.props.tier} </p>
+                  <p>{comment.data.author} | {comment.data.score}</p>
+                  <p>{comment.data.body}</p>
+                </div>
+            );
+          }
+        }
+      }.bind(this));
     return (
       <div>
-      Comments
+        {comments}
       </div>
     )
   }
 })
 
-var Nodes = React.createClass({
-  getDefaultProps(){
+var Force = React.createClass({
+
+  componentDidMount(){
+    force.create(this.props.comments)
   },
+  render(){
+    return (
+      <div id="force"></div>
+    )
+  }
+})
+
+
+var Nodes = React.createClass({
   componentDidMount(){
     d3Chart.create('#nodes', {
       width: '1000px',
@@ -136,12 +179,13 @@ var Dash = React.createClass({
   }
 });
 
+// ROOT Component
 var Root = React.createClass({
   getInitialState(){
     return {
       posts: null,
-      bubble: false,
-      thread: null
+      thread: null,
+      bubble: false
     }
   },
   componentWillMount(){
@@ -156,6 +200,16 @@ var Root = React.createClass({
         })
       }.bind(this),"json")
     }.bind(this),"json")  
+  },
+  componentDidMount(){
+    // setInterval(function(){
+    //   $.getJSON('https://www.reddit.com/.json?limit=75').done(function(data) {
+    //     console.log('updating API')
+    //     this.setState({
+    //       posts: data.data.children
+    //     })
+    //   }.bind(this),"json");  
+    // }.bind(this),10000)
   },
   updateState(){
     // update state
@@ -188,9 +242,7 @@ var Root = React.createClass({
           <Nav />
           <Dash toggleBubble={this.updateState}/>
           <hr />
-          <div>
-            {view}
-          </div>
+          <div>{view}</div>
         </div>
       )     
     }
