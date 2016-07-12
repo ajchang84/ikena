@@ -31,7 +31,7 @@ var ThreadBox = React.createClass({
         <div id='threadBox'>
         <Content content={this.props.thread[0].data.children[0].data} />
         <Comments comments={this.props.thread[1].data.children} tier={1} />
-        <Force comments={this.props.thread[1].data.children} />
+        <Force comments={this.props.thread} />
         </div>
       )  
     }
