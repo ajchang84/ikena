@@ -47,7 +47,6 @@ const force = {
 
     var nodes = this.flatten(rootNode),
         links = d3.layout.tree().links(nodes);
-        console.log(nodes)
     // Restart the force layout.
     force
         .nodes(nodes)

@@ -1,9 +1,21 @@
+body {
+  font-family: 'Open Sans',sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
 svg {
   display: block;
   margin: auto;
 }
 
-#nav {
+.icon {
+  width: 30px;
+  position: relative;
+  top: 0px;
+}
+
+#favorite {
   background-color: #f0f0f0;
   width: 100%;
   height: 30px;
@@ -11,12 +23,18 @@ svg {
 
 #dash {
   width: 100%;
-  height: 100px;
+  height: 70px;
   padding-left: 2em;
+  border-bottom: solid 1px #f0f0f0;
+}
+
+#subreddit {
+  display: inline-block;
+  font-size: 50px;
+  margin-top: 0px;
 }
 
 #postBox {
-  width: 49%;
   max-height: 100vh;
   padding-left: 2em;
   padding-right: 2em;
@@ -26,9 +44,17 @@ svg {
 
 #threadBox {
   max-height: 100vh;
-  width:49%;
+
   float: left;
   overflow-y: scroll;
+}
+
+.split {
+  width:49%;
+}
+
+#switches {
+  float: right;
 }
 
 img {
@@ -36,15 +62,51 @@ img {
 }
 
 div.posts {
-  margin-bottom: 2em;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+div.posts:hover {
+  background-color: #f0f0f0;
 }
 
 .thumbnails {
+  font-family: 'Open Sans',sans-serif;
   width: 70px;
   height: 70px;
   border-radius: 10px;
   margin-right: 1em;
   float: left;
+  line-height: 70px
+}
+
+.loading {
+  width: 200px;
+  height: 200px;
+}
+
+.text {
+  background-color: orange;
+  text-align: center;
+  color: black;
+}
+
+.self {
+  background-color: yellow;
+  text-align: center;
+  color: black;
+}
+
+.nsfw {
+  background-color: red;
+  text-align: center;
+  color: black;
+}
+
+.default {
+  background-color: lightblue;
+  text-align: center;
+  color: black;
 }
 
 h1 {
@@ -54,7 +116,6 @@ h1 {
 p {
   font-family: 'Open Sans',sans-serif;
   margin-bottom: 3px;
-
 }
 
 p.title {
@@ -67,16 +128,47 @@ p.subreddit {
   margin-bottom: 4px;
 }
 
-p.score {
+.score {
   font-weight: 300;
 }
 
 div.comment {
-  margin-bottom: 10px;
+  border-radius: 0px, 10px, 10px, 0;
+  padding: 0px, 20px, 20px, 0px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  border-left: solid 1px black;
+}
+
+.commentHead {
+  background-color: #FFFBE5;
+  padding: 10px;
+}
+
+.commentBody {
+  padding: 20px;
+  padding-top: 30px;
+}
+
+#content {
+  margin: 50px;
+}
+
+.author {
+  font-weight: 1000;
+}
+
+div.score, div.author {
+  display: inline-block;
+  padding-right: 10px;
+}
+
+div.switch {
+  display: inline-block;
 }
 
 /* The switch - the box around the slider */
-.switch {
+label.switch {
   position: relative;
   display: inline-block;
   width: 60px;
@@ -84,7 +176,7 @@ div.comment {
 }
 
 /* Hide default HTML checkbox */
-.switch input {display:none;}
+label.switch input {display:none;}
 
 /* The slider */
 .slider {
@@ -154,8 +246,21 @@ circle:hover {
   stroke-width: 1.5px;
 }
 
+#nodes {
+  margin: 0 auto;
+  width: 1000px;
+  height: 1000px;
+  overflow: scroll;
+  overflow-y: scroll;
+  /*float: left;*/
+}
+
 .link {
   fill: none;
   stroke: #9ecae1;
   stroke-width: 1.5px;
+}
+
+div.block {
+  
 }

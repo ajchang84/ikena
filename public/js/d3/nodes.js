@@ -15,7 +15,6 @@ d3Chart.update = function(svg, state) {
 
 // draw nodes using layout.pack()
 d3Chart._drawNodes = function(el, data) {
-
   // creation of json object needed for layout.pack()
   json = {};
   json.name = 'root';
@@ -31,14 +30,11 @@ d3Chart._drawNodes = function(el, data) {
 
   // unpacks json into data array called bubble
   var bubble = d3.layout.pack()
-    .sort(null)
+    // .sort(null)
     .size([diameter, diameter])
-    .value(function(d) { return d.size/100; })
-    .padding(1.0)
-    .nodes(json)
-
-  // remove root from data array
-  bubble.shift();
+    .value(function(d) { return d.size; })
+    // .padding(1.5)
+    // .nodes(json)
 
   // uses d3-tip library to create tooltip on hover
   var tip = d3.tip()
@@ -51,21 +47,28 @@ d3Chart._drawNodes = function(el, data) {
   el.call(tip);
 
   var nodes = el.selectAll('.d3-node')
-    .data(bubble).enter().append('g')
+    .data(bubble.nodes(json)
+    .filter(function(d) {return !d.children}))
+    .enter().append('g')
     .attr('class', 'd3-node')
     .attr("transform",function(d){
       return "translate("+d.x+","+d.y+")";
     });
+
   // ENTER
   nodes.append('a')
       .attr("xlink:href", "http://en.wikipedia.org/wiki/")
       .append('circle')
-      // .transition()
-      // .duration(750)
-      .attr('r', function(d, i) { return d.size/100 })
-      .attr('fill', function(d,i) {return color(i)})
+      .attr('r', 0)
+      .attr('fill', 'white')
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide)
+      .transition()
+      .duration(2000)
+      .attr('r', function(d, i) { return d.size/90 })
+      .attr('fill', function(d,i) {return color(i)})
+
+
 
 
 
