@@ -1,23 +1,25 @@
 const force = {
   create(props) {
     var width = 960,
-        height = 500,
+        height = 960,
         rootNode ={};
 
     var svg = d3.select("#force").append("svg")
         .attr("width", width)
         .attr("height", height);
 
-    rootNode = {'name': props[0].data.children[0].data.title, 'size': props[0].data.children[0].data.score / 100}
+    rootNode = {'root': true, 'name': props[0].data.children[0].data.title, 'size': props[0].data.children[0].data.score / 100}
     
     function parse(children) {
       var nodeArray = [];
       children.forEach(function(child){
         var node = {};
-        node.name = child.data.body;
-        node.size = child.data.score;
-        if (child.data.replies) node.children = parse(child.data.replies.data.children)
-        nodeArray.push(node)
+        if(child.data.body) {
+          node.name = child.data.body;
+          node.size = child.data.score;
+          if (child.data.replies) node.children = parse(child.data.replies.data.children)
+          nodeArray.push(node)          
+        }
       })
       return nodeArray;
     }
@@ -47,7 +49,7 @@ const force = {
     }
 
     var force = d3.layout.force()
-        .size([500, 500])
+        .size([960, 960])
         .on("tick", tick)
     svg.call(tip);
 
@@ -60,6 +62,7 @@ const force = {
     force
         .nodes(nodes)
         .links(links)
+        .charge(-100)
         .start();
 
     // Update the links…
@@ -74,7 +77,8 @@ const force = {
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+        .attr("y2", function(d) { return d.target.y; })
+        .style("opacity",0.8);
 
     // Update the nodes…
     node = node.data(nodes, function(d) { return d.id; }).style("fill", this.color);
@@ -89,8 +93,9 @@ const force = {
         .on('mouseout', tip.hide)
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
-        .attr("r", function(d) { return Math.sqrt(d.size) || 0; })
+        .attr("r", function(d) { return 3 + Math.sqrt(d.size) || 0; })
         .style("fill", this.color)
+        .style("opacity",0.8)
         .on("click", function(d){
           if (!d3.event.defaultPrevented) {
             if (d.children) {
@@ -108,7 +113,7 @@ const force = {
 
   // Color leaf nodes orange, and packages white or blue.
   color(d) {
-    return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+    return d._children ? "#3182bd" : d.root ? 'black' : d.children ? "#c6dbef" : "#fd8d3c";
   },
 
   // Returns a list of all nodes under the root.

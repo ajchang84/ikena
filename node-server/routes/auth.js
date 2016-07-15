@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const session = require('cookie-session');
 const passport = require('passport');
-const request = require("request");
+// const request = require("request");
 
 const crypto = require('crypto');
 
@@ -15,30 +15,30 @@ router.get('/reddit', function(req, res, next){
 });
 
 router.get('/reddit/callback', function(req, res, next){
-  var username = process.env['REDDIT_CONSUMER_KEY']
-  var password = process.env['REDDIT_CONSUMER_SECRET']
-  var options = {
-    uri: 'https://ssl.reddit.com/api/v1/access_token',
-    method: 'POST',
-    headers: {
-      'Authorization' : "Basic " + new Buffer(username + ":" + password, "utf8").toString("base64")
-    },
-    form: {
-      redirect_uri: 'http://localhost:3000/auth/reddit/callback',
-      code: req.query.code,
-      grant_type: 'authorization_code'
-    }
-  };
+  // var username = process.env['REDDIT_CONSUMER_KEY']
+  // var password = process.env['REDDIT_CONSUMER_SECRET']
+  // var options = {
+  //   uri: 'https://ssl.reddit.com/api/v1/access_token',
+  //   method: 'POST',
+  //   headers: {
+  //     'Authorization' : "Basic " + new Buffer(username + ":" + password, "utf8").toString("base64")
+  //   },
+  //   form: {
+  //     redirect_uri: 'http://localhost:3000/auth/reddit/callback',
+  //     code: req.query.code,
+  //     grant_type: 'authorization_code'
+  //   }
+  // };
 
-  request(options, function(error, response, body) {
-    console.log(req.query.code)
-    console.log(options)
-    console.log(body)
-  });
+  // request(options, function(error, response, body) {
+  //   console.log(req.query.code)
+  //   console.log(options)
+  //   console.log(body)
+  // });
 
   if (req.query.state == req.session.state){
     passport.authenticate('reddit', {
-      successRedirect: '/auth/success',
+      successRedirect: '/',
       failureRedirect: '/fail'
     })(req, res, next);
   }

@@ -17,6 +17,7 @@
     "knex": "^0.11.7",
     "material-ui": "^0.15.2",
     "passport": "^0.3.2",
+    "passport-oauth": "^1.0.0",
     "passport-reddit": "^0.2.4",
     "pg": "^6.0.2",
     "pug": "^2.0.0-beta3",

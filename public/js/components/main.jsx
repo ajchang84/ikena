@@ -1,8 +1,14 @@
 var Nav = React.createClass({
   render(){
+    if (this.props.signedIn.isAuth) {
+      var log = <a href='/auth/logout'>Logout</a>
+    } 
+    else if (!this.props.signedIn.isAuth) {
+      var log = <a href='/auth/reddit'>Login</a>
+    }
     return (
       <div id="favorite">
-        <a href='/auth/reddit'>Login</a>
+        {log}
       </div>
     )
   }
@@ -18,7 +24,7 @@ var Dash = React.createClass({
   render(){
     return (
       <div id="dash" className='container-fluid'>
-        <h2 id="subreddit" className='lead'>FRONT</h2>
+        <h2 id="subreddit" className='lead'>{this.props.subreddit}</h2>
         <div id="switches">
           <div className='switch'>
             <img className='icon' src={'../images/bubble.png'} />
@@ -64,6 +70,7 @@ var PostsBox = React.createClass({
           subreddit={post.data.subreddit}
           num_comments={post.data.num_comments}
           handleClick={this.loadPost}
+          loadSub={this.props.loadSub}
           key={index}
         />
       );
@@ -94,6 +101,10 @@ var Post = React.createClass({
   // click post to load the post comment thread
   loadPost(){
     this.props.handleClick(this.props.id)
+  },
+
+  loadSub(){
+    this.props.loadSub(this.props.subreddit)
   },
 
   // handle upvote
@@ -178,7 +189,7 @@ var Post = React.createClass({
             <p onClick={this.loadPost} className='title'>{this.props.title}</p>
           </div>
           <div className='row'>
-            <p className='subreddit'>{this.props.subreddit}</p>
+            <p onClick={this.loadSub} className='subreddit'>{this.props.subreddit}</p>
           </div>
           <div className='row'>
             <div className='list'> 
@@ -230,9 +241,9 @@ var ThreadBox = React.createClass({
             <Content content={this.props.thread[0].data.children[0].data} 
                      split={this.props.split} 
                      returnToPosts={this.props.returnToPosts}
+                     comments={this.props.thread}
             />
             <Comments comments={this.props.thread[1].data.children} tier={1} />
-            <Force comments={this.props.thread} />
           </div>
         )  
       }      
@@ -242,8 +253,18 @@ var ThreadBox = React.createClass({
 })
 
 var Content = React.createClass({
+  getInitialState(){
+    return {
+      commentWeb: false
+    }
+  },
   backButton(){
     this.props.returnToPosts()
+  },
+  commentWeb(){
+    this.setState({
+      commentWeb: true
+    })
   },
   render(){
     console.log(this.props.content.url)
@@ -251,8 +272,12 @@ var Content = React.createClass({
     if (!this.props.split) {
       var backButton = <button className='btn btn-default' onClick={this.backButton}>Back</button>
     }
+    if (this.state.commentWeb) {
+      var dialogueDiv = <Force comments={this.props.comments} />
+    }
     return (
       <div id='content'>
+        {dialogueDiv}
         <div className='contentHead'>
           {backButton}
           <h3>{this.props.content.title}</h3>
@@ -262,6 +287,9 @@ var Content = React.createClass({
         <div className='score'>{this.props.content.score}</div>
         <div id='display'>
           <img src={this.props.content.url} />
+        </div>
+        <div>
+          <p onClick={this.commentWeb}>O</p>
         </div>
       </div>
     )
@@ -363,10 +391,12 @@ var Nodes = React.createClass({
 var Root = React.createClass({
   getInitialState(){
     return {
+      isAuth: false,
       posts: null,
       thread: null,
       bubble: false,
       split: false,
+      sub: 'front'
     }
   },
   componentWillMount(){
@@ -374,9 +404,14 @@ var Root = React.createClass({
     $.getJSON('https://www.reddit.com/.json?limit=50').done(function(data) {
       console.log('API call for posts')
       var firstData = data.data.children
+        // this.setState({
+        // })
+      $.getJSON('/api/isAuth').done(function(res){
         this.setState({
+          isAuth: res,
           posts: firstData
         })
+      }.bind(this))
     }.bind(this),"json")  
   },
   componentDidMount(){
@@ -410,8 +445,19 @@ var Root = React.createClass({
       split: !this.state.split
     });
   },
+  loadSub(sub){
+    $.getJSON('http://www.reddit.com/r/' + sub +'.json').done(function(data){
+      this.setState({
+        sub: sub,
+        posts: data.data.children,
+      })
+    }.bind(this),"json")
+  },
   threadState(id){
-    thread: $.getJSON('http://www.reddit.com/' + id + '.json').done(function(data){
+    this.setState({
+      thread: null
+    })
+    $.getJSON('http://www.reddit.com/' + id + '.json').done(function(data){
       this.setState({
         thread: data,
       })
@@ -423,15 +469,19 @@ var Root = React.createClass({
     })
   },
   render(){
-    $.getJSON('/auth/token').done(function(token){
-      console.log(token)
-      $.getJSON('https://www.reddit.com/api/v1/meidentity', {
-        'Authorization': 'bearer ' + token.access_token
-      }).done(function(response){
-        console.log(response)
-      })
-    })
-
+    // $.getJSON('/auth/token').done(function(token){
+    //   console.log(token)
+    //   $.ajax({
+    //     url: 'https://oauth.reddit.com/api/v1/me/',
+    //     type: 'GET',
+    //     dataType: 'json',
+    //     success: function(response) { alert('hello!'); },
+    //     error: function() { alert('boo!'); },
+    //     headers: {
+    //       "Authorization":"bearer " + token.access_token,
+    //     }
+    //   });
+    // })
     var view;
 
     // view posts using bubbles, no split screen
@@ -458,7 +508,10 @@ var Root = React.createClass({
     // Clicking on a post brings up the content and comments thread
     else if (!this.state.bubble && !this.state.split) {
       if (!this.state.thread) {
-        view = <PostsBox posts={this.state.posts} updatePost={this.threadState} />     
+        view = <PostsBox posts={this.state.posts} 
+                         updatePost={this.threadState}
+                         loadSub={this.loadSub}
+                        />     
       }
       else if (this.state.thread) {
         view = <ThreadBox thread={this.state.thread} 
@@ -470,10 +523,11 @@ var Root = React.createClass({
     if (this.state.posts) {
       return (
         <div>
-          <Nav />
+          <Nav signedIn={this.state.isAuth}/>
           <Dash 
             toggleBubble={this.updateToggleBubble}
             toggleSplit={this.updateToggleSplit}
+            subreddit={this.state.sub}
           />
           <div className='container-fluid'>{view}</div>
         </div>

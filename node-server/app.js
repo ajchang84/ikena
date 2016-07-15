@@ -6,6 +6,8 @@ const session = require('cookie-session');
 const passport = require('passport');
 const RedditStrategy = require('passport-reddit').Strategy;
 const knex = require("./db/knex");
+const request = require("request");
+
 
 app.use(express.static(__dirname + '/../public'));
 app.set('view engine', 'pug');
@@ -37,7 +39,20 @@ passport.use(new RedditStrategy({
             'subscribe', 'vote', 'wikiedit', 'wikiread']
   },
   function(accessToken, refreshToken, profile, done) {
-    eval(require('locus'));
+  // console.log(accessToken)
+  // var options = {
+  //   uri: 'https://oauth.reddit.com/api/v1/me',
+  //   method: 'GET',
+  //   headers: {
+  //     'Authorization' : "bearer " + accessToken
+  //   },
+  // };
+
+  // request(options, function(error, response, body) {
+  //   debugger;
+  //   console.log(body)
+  // });
+
     knex('users').where({redditId: profile.id}).first().then((user) =>{
       if (!user) {
         knex('users').insert({redditId: profile.id}).then(function(user){
@@ -60,6 +75,11 @@ app.use('/auth', require('./routes/auth'));
 app.get('/', function(req, res) {
   res.render('index', {user: req.user});
 });
+
+app.get('/api/isAuth', function(req, res) {
+  if (req.isAuthenticated()) res.json( {'isAuth': true} );
+  else res.json( {'isAuth': false} )
+})
 
 app.get('*', function(req, res) {
   res.redirect('/');

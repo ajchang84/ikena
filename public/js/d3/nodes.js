@@ -7,7 +7,7 @@ d3Chart.create = function(el, props, state){
   var svg = d3.select(el).append('svg')
     .attr('width', props.width)
     .attr('height', props.height);
-      
+
   this._drawNodes(svg, state);
 };
 
@@ -69,11 +69,6 @@ d3Chart._drawNodes = function(el, data) {
       .on('mouseout', tip.hide)
       .transition()
       .duration(2000)
-      .attr('r', function(d, i) { if(d.size < 501) return 4 ; else return d.size/90 })
+      .attr('r', function(d, i) { if(d.size <= 500) return 4 ; else return d.size/90 })
       .attr('fill', function(d,i) {return color(i)})
-
-
-
-
-
 };

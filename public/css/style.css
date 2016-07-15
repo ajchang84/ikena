@@ -4,6 +4,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+#force {
+  position: absolute;
+  background-color: white;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+
 svg {
   display: block;
   margin: auto;
