@@ -83,10 +83,57 @@ var PostsBox = React.createClass({
 });
 
 var Post = React.createClass({
+  getInitialState(){
+    return {
+      upvoted: false,
+      downvoted: false,
+      score: this.props.score
+    }
+  },
+
+  // click post to load the post comment thread
   loadPost(){
     this.props.handleClick(this.props.id)
   },
+
+  // handle upvote
+  upvote(){
+    if (!this.state.downvoted && !this.state.upvoted) {
+      this.setState({
+        upvoted: true,
+        downvoted: false,
+        score: this.state.score + 1
+      })
+    } 
+    else if (this.state.downvoted && !this.state.upvoted) {
+      this.setState({
+        upvoted: true,
+        downvoted: false,
+        score: this.state.score + 2
+      })
+    }
+  },
+
+  // handle downvote
+  downvote(){
+    if (!this.state.upvoted && !this.state.downvoted) {
+      this.setState({
+        upvoted: false,
+        downvoted: true,
+        score: this.state.score - 1
+      })    
+    }
+    else if (this.state.upvoted && !this.state.downvoted) {
+      this.setState({
+        upvoted: false,
+        downvoted: true,
+        score: this.state.score - 2
+      })
+    }
+  },
+
   render(){
+    // determines thumbnail to be used for each post
     var thumbnail;
     if (this.props.thumbnail) {
       if (this.props.thumbnail === 'self') {
@@ -102,13 +149,60 @@ var Post = React.createClass({
         thumbnail = <img className='thumbnails' src={this.props.thumbnail} />
       }
     } else thumbnail = <div className='thumbnails text'>Text</div> 
+
+
+    if (this.state.upvoted) {
+      var scoreStyle = {
+        color: 'green',
+      }
+      var upvoteStyle = {
+        color: 'green'
+      }
+    }
+    else if (this.state.downvoted) {
+      var scoreStyle = {
+        color: 'red'
+      } 
+      var downvoteStyle = {
+        color: 'red'
+      }
+    }
+
     return (
-      <div className='posts'>
-        {thumbnail}
-        <div>
-          <p onClick={this.loadPost} className='title'>{this.props.title}</p>
-          <p className='subreddit'>{this.props.subreddit}</p> 
-          <p className='score'>{this.props.score} points | {this.props.num_comments} comments</p>
+      <div className='posts clearfix'>
+        <div className='post-col-left'>
+          {thumbnail}
+        </div>
+        <div className='post-col-right'>
+          <div className='row'>
+            <p onClick={this.loadPost} className='title'>{this.props.title}</p>
+          </div>
+          <div className='row'>
+            <p className='subreddit'>{this.props.subreddit}</p>
+          </div>
+          <div className='row'>
+            <div className='list'> 
+              <p>
+                <span className='score' style={scoreStyle}>
+                  {this.state.score + ' '}
+                </span>
+                <span className="glyphicon glyphicon-triangle-top" aria-hidden="true"
+                      onClick={this.upvote}
+                      style={upvoteStyle}
+                />
+                <span className="glyphicon glyphicon-triangle-bottom" aria-hidden="true" 
+                      onClick={this.downvote}
+                      style={downvoteStyle}
+                />
+              </p>
+            </div>
+            <div className='list'>
+              <p>
+                <span className="glyphicon glyphicon-comment" aria-hidden="true" />
+                {' ' + this.props.num_comments} 
+              </p>
+            </div>
+          </div>
         </div>
       </div>
   )}
@@ -122,9 +216,7 @@ var Category = React.createClass({
 });
 
 var ThreadBox = React.createClass({
-  backButton(){
-    this.props.returnToPosts()
-  },
+
   render(){
     if (this.props.thread) {
       if (this.props.thread[0]) {
@@ -135,7 +227,10 @@ var ThreadBox = React.createClass({
         }
         return (
           <div id='threadBox' style={divStyle}>
-            <Content content={this.props.thread[0].data.children[0].data} split={this.props.split} />
+            <Content content={this.props.thread[0].data.children[0].data} 
+                     split={this.props.split} 
+                     returnToPosts={this.props.returnToPosts}
+            />
             <Comments comments={this.props.thread[1].data.children} tier={1} />
             <Force comments={this.props.thread} />
           </div>
@@ -147,7 +242,9 @@ var ThreadBox = React.createClass({
 })
 
 var Content = React.createClass({
-
+  backButton(){
+    this.props.returnToPosts()
+  },
   render(){
     console.log(this.props.content.url)
     // if split is not on, add a back button to navigate back
@@ -157,7 +254,9 @@ var Content = React.createClass({
     return (
       <div id='content'>
         <div className='contentHead'>
+          {backButton}
           <h3>{this.props.content.title}</h3>
+        }
         </div>
         <div className='author'>{this.props.content.author}</div>
         <div className='score'>{this.props.content.score}</div>
@@ -238,7 +337,11 @@ var Nodes = React.createClass({
     }, this.props.posts);
   },
   componentDidUpdate(){
-    d3Chart.update(d3.select('svg'), this.props.posts);
+    console.log('componentDidUpdate')
+    d3Chart.create('#nodes', {
+      width: 1000,
+      height: 1000
+    }, this.props.posts);
   },
   render(){
         console.log('render')
@@ -320,6 +423,15 @@ var Root = React.createClass({
     })
   },
   render(){
+    $.getJSON('/auth/token').done(function(token){
+      console.log(token)
+      $.getJSON('https://www.reddit.com/api/v1/meidentity', {
+        'Authorization': 'bearer ' + token.access_token
+      }).done(function(response){
+        console.log(response)
+      })
+    })
+
     var view;
 
     // view posts using bubbles, no split screen
@@ -349,7 +461,10 @@ var Root = React.createClass({
         view = <PostsBox posts={this.state.posts} updatePost={this.threadState} />     
       }
       else if (this.state.thread) {
-        view = <ThreadBox thread={this.state.thread} split={false} returnToPosts={this.clearThread}/>
+        view = <ThreadBox thread={this.state.thread} 
+                          split={false} 
+                          returnToPosts={this.clearThread}
+               />
       }
     }
     if (this.state.posts) {

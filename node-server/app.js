@@ -18,7 +18,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.serializeUser(function(user, done) {
-  console.log('serializeUser')
   //later this will be where you selectively send to the browser an identifier for your user, like their primary key from the database, or their ID from linkedin
   done(null, user);
 });
@@ -38,15 +37,18 @@ passport.use(new RedditStrategy({
             'subscribe', 'vote', 'wikiedit', 'wikiread']
   },
   function(accessToken, refreshToken, profile, done) {
+    eval(require('locus'));
     knex('users').where({redditId: profile.id}).first().then((user) =>{
       if (!user) {
         knex('users').insert({redditId: profile.id}).then(function(user){
           user.access_token = accessToken;
+          user.name = profile.name;
           return done(null, user);
         });
       }
       else {
         user.access_token = accessToken;
+        user.name = profile.name;
         return done(null, user);
       }
     })
@@ -56,7 +58,7 @@ passport.use(new RedditStrategy({
 app.use('/auth', require('./routes/auth'));
 
 app.get('/', function(req, res) {
-  res.render('index');
+  res.render('index', {user: req.user});
 });
 
 app.get('*', function(req, res) {

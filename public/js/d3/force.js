@@ -27,6 +27,14 @@ const force = {
 
   update(svg, rootNode) {
 
+    // tooltip
+    var tip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([0, 0])
+    .html(function(d) {
+      return "<p>" + d.name + "</p><strong>Score:</strong> <span style='color:red'>" + d.size + "</span>";
+    })
+
     function tick() {
       console.log('ticking')
       link.attr("x1", function(d) { return d.source.x; })
@@ -41,6 +49,7 @@ const force = {
     var force = d3.layout.force()
         .size([500, 500])
         .on("tick", tick)
+    svg.call(tip);
 
     var link = svg.selectAll(".link"),
         node = svg.selectAll(".node");
@@ -76,6 +85,8 @@ const force = {
     // Enter any new nodes.
     node.enter().append("circle")
         .attr("class", "node")
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide)
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
         .attr("r", function(d) { return Math.sqrt(d.size) || 0; })

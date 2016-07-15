@@ -91,10 +91,31 @@ div.posts:hover {
   color: black;
 }
 
+.post-col-left {
+  width: 100px;
+  float: left;
+}
+.post-col-right {
+  width: 80%;
+  float: left;
+}
+
+div.list {
+  float: left;
+  width: 80px;
+  margin-right: 10px;
+}
+
 .self {
   background-color: yellow;
   text-align: center;
   color: black;
+}
+
+.clearfix:after {
+  content: " ";
+  display: table;
+  clear: both;
 }
 
 .nsfw {
@@ -262,5 +283,5 @@ circle:hover {
 }
 
 div.block {
-  
+
 }
