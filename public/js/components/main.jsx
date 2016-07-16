@@ -1,14 +1,28 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 var Nav = React.createClass({
   render(){
     if (this.props.signedIn.isAuth) {
       var log = <a href='/auth/logout'>Logout</a>
     } 
     else if (!this.props.signedIn.isAuth) {
-      var log = <a href='/auth/reddit'>Login</a>
+      var log = <a href='/auth/reddit'>Sign In</a>
     }
     return (
       <div id="favorite">
-        {log}
+        <div className='leftBlock'>FRONT</div>
+        <div className='leftBlock'>ASKREDDIT</div>
+        <div className='leftBlock'>FUNNY</div>
+        <div className='leftBlock'>IAMA</div>
+        <div className='leftBlock'>WORLDNEWS</div>
+        <div className='leftBlock'>PICS</div>
+        <div className='leftBlock'>TODAYILEARNED</div>
+        <div className='leftBlock'>NEWS</div>
+        <div className='leftBlock'>GAMING</div>
+        <div className="rightBlock">
+          {log}
+        </div>
       </div>
     )
   }
@@ -266,6 +280,11 @@ var Content = React.createClass({
       commentWeb: true
     })
   },
+  remove(){
+    this.setState({
+      commentWeb: false
+    })
+  },
   render(){
     console.log(this.props.content.url)
     // if split is not on, add a back button to navigate back
@@ -273,23 +292,19 @@ var Content = React.createClass({
       var backButton = <button className='btn btn-default' onClick={this.backButton}>Back</button>
     }
     if (this.state.commentWeb) {
-      var dialogueDiv = <Force comments={this.props.comments} />
+      var dialogueDiv = <Force comments={this.props.comments} remove={this.remove} />
     }
     return (
       <div id='content'>
         {dialogueDiv}
         <div className='contentHead'>
           {backButton}
-          <h3>{this.props.content.title}</h3>
-        }
+          <h3>{this.props.content.title}<a onClick={this.commentWeb}>O</a></h3>
         </div>
         <div className='author'>{this.props.content.author}</div>
         <div className='score'>{this.props.content.score}</div>
         <div id='display'>
           <img src={this.props.content.url} />
-        </div>
-        <div>
-          <p onClick={this.commentWeb}>O</p>
         </div>
       </div>
     )
@@ -352,7 +367,7 @@ var Force = React.createClass({
   },
   render(){
     return (
-      <div id="force"></div>
+      <div id="force"><a onClick={this.props.remove}>Back</a></div>
     )
   }
 })

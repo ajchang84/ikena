@@ -93,7 +93,7 @@ const force = {
         .on('mouseout', tip.hide)
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
-        .attr("r", function(d) { return 3 + Math.sqrt(d.size) || 0; })
+        .attr("r", function(d) { return 3 + Math.sqrt(d.size) || 3; })
         .style("fill", this.color)
         .style("opacity",0.8)
         .on("click", function(d){
@@ -113,7 +113,11 @@ const force = {
 
   // Color leaf nodes orange, and packages white or blue.
   color(d) {
-    return d._children ? "#3182bd" : d.root ? 'black' : d.children ? "#c6dbef" : "#fd8d3c";
+    return d._children ? "#3182bd"
+            : d.root ? 'black' 
+            : d.children 
+              ? d.size < 1 ? "red" : "#c6dbef" 
+            : "#fd8d3c";
   },
 
   // Returns a list of all nodes under the root.

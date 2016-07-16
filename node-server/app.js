@@ -6,7 +6,11 @@ const session = require('cookie-session');
 const passport = require('passport');
 const RedditStrategy = require('passport-reddit').Strategy;
 const knex = require("./db/knex");
-const request = require("request");
+// const request = require("request");
+var Router = require('react-router').Router
+var Route = require('react-router').Route
+var hashHistory = require('react-router').hashHistory
+var Link = require('react-router').Link
 
 
 app.use(express.static(__dirname + '/../public'));
