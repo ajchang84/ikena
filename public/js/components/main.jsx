@@ -1,6 +1,3 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-
 var Nav = React.createClass({
   render(){
     if (this.props.signedIn.isAuth) {
