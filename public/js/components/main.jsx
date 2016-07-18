@@ -27,6 +27,7 @@ var Nav = React.createClass({
         <Link to={`/todayilearned`}><div className='leftBlock' onClick={this.loadSub}>TODAYILEARNED</div></Link>
         <Link to={`/news`}><div className='leftBlock' onClick={this.loadSub}>NEWS</div></Link>
         <Link to={`/gaming`}><div className='leftBlock' onClick={this.loadSub}>GAMING</div></Link>
+        <Link to={`/about`}><div className='leftBlock'>about</div></Link>
         <div className="rightBlock">
           {log}
         </div>
@@ -288,7 +289,7 @@ var Content = React.createClass({
     console.log(this.props.content.url)
     // if split is not on, add a back button to navigate back
     if (!this.props.split) {
-      var backButton = <input className='imageButton' type="image" src="../images/back.png" />
+      var backButton = <input onClick={this.backButton} className='imageButton' type="image" src="../images/back.png" />
     }
     if (this.state.commentWeb) {
       var dialogueDiv = <Force comments={this.props.comments} remove={this.remove} />
@@ -579,16 +580,41 @@ var Root = React.createClass({
             subreddit={this.state.sub}
           />
           <div className='container-fluid'>{view}</div>
+
         </div>
       )     
     }
     return <div className='Aligner'><img className='loading' src='../images/loading.gif'/></div>
   }
-});   
+});
+
+var About = React.createClass({
+  render(){
+    return (<div>
+      <div className="panel panel panel-default">
+        <div className="panel-heading"> 
+          <div className="panel-default">About Vision Therapy Online™</div>
+        </div>
+        <div className="desc">We had a dream of providing high-quality, cost-effective vision therapy that any patient could access at home. A group of web developers with a background in vision founded Vision Therapy Online like last week. More than 3 days later, we offer world-className products and services that connect patients with their eyecare professionals, as well as extend access to quality healthcare.</div>
+      </div>
+      <div className="panel panel panel-default">
+        <div className="panel-heading">
+          <div className="panel-default">Meet The Founders</div>
+        </div>
+        <div className="desc"> <img src="/images/meetTheDevs.jpg" alt="picture of the founders"/></div>
+        <div className="desc">VTO was founded by Alex Chang, Katie Low, and Gunther Schneider</div>
+      </div>
+    </div>)
+  }
+})
 
 ReactDOM.render((
   <Router history={browserHistory}>
     <Route path="/" component={Root}>
+    </Route>
+    <Route path="/askreddit" component={Root}>
+    </Route>    
+    <Route path="/about" component={About}>
     </Route>
   </Router>
 ), document.getElementById("root"));
