@@ -14,6 +14,20 @@ body {
   width: 90%;
 }
 
+#force button {
+  float: right;
+}
+
+#cover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100vw;
+  width: 100vw;
+  background-color: #333;
+  opacity: .5;
+}
+
 svg {
   display: block;
   margin: auto;
@@ -42,15 +56,27 @@ svg {
 
 #postBox {
   max-height: 100vh;
+  padding-top: 3em;
   padding-left: 2em;
   padding-right: 2em;
   float: left;
   overflow: scroll;
 }
 
+.forceButton {
+  width: 60px;
+  margin-left: 20px;
+  border: solid 1px #f0f0f0;
+  border-radius: 10px;
+
+}
+
+.forceButton:hover {
+  border: solid 1px black;
+}
+
 #threadBox {
   max-height: 100vh;
-
   float: left;
   overflow-y: scroll;
 }
@@ -86,7 +112,25 @@ div.posts:hover {
   line-height: 70px
 }
 
+.Aligner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vh;
+}
+
+.imageButton {
+  width: 20px;
+}
+
 .loading {
+/*  position: relative;
+  margin: auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;*/
   width: 200px;
   height: 200px;
 }
@@ -116,6 +160,10 @@ div.list {
   background-color: yellow;
   text-align: center;
   color: black;
+}
+
+#display {
+  width: 80%;
 }
 
 .clearfix:after {
@@ -209,10 +257,10 @@ label.switch input {display:none;}
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 17px;
+  left: 5px;
+  right: 5px;
+  bottom: -17px;
   background-color: #ccc;
   -webkit-transition: .4s;
   transition: .4s;
@@ -239,9 +287,9 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+  -webkit-transform: translateX(17px);
+  -ms-transform: translateX(17px);
+  transform: translateX(17px);
 }
 
 /* Rounded sliders */
@@ -303,7 +351,21 @@ div.leftBlock {
   line-height: 30px;
 }
 
-div.leftBlock:hover {
+div.left {
+  float: left;
+  width: 80%;
+  margin-bottom: 20px;
+}
+div.right {
+  float: left;
+  width: 19%;
+}
+
+h3 {
+  margin-top: 0;
+}
+
+#favorite div.leftBlock:hover {
   background-color: #ccc;
   float: left;
   line-height: 30px;

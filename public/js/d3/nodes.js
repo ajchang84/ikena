@@ -1,3 +1,8 @@
+var Router = ReactRouter.Router
+var browserHistory = ReactRouter.browserHistory
+var Route = ReactRouter.Route
+var Link = ReactRouter.Link
+
 var d3Chart = {};
 
 // create svg on el
@@ -24,7 +29,7 @@ d3Chart._drawNodes = function(el, data) {
   json.name = 'root';
   json.children = [];
   data.forEach(function(val){
-    json.children.push({name: val.data.title, size: val.data.score})
+    json.children.push({name: val.data.title, size: val.data.score, url: val.data.url})
   });
 
   // configurations
@@ -61,7 +66,12 @@ d3Chart._drawNodes = function(el, data) {
 
   // ENTER
   nodes.append('a')
-      .attr("xlink:href", "http://en.wikipedia.org/wiki/")
+      .attr("xlink:href", function(d){
+
+        return d.url
+
+      })
+      .attr('target', '_blank')
       .append('circle')
       .attr('r', 0)
       .attr('fill', 'white')

@@ -8,7 +8,7 @@ const force = {
         .attr("width", width)
         .attr("height", height);
 
-    rootNode = {'root': true, 'name': props[0].data.children[0].data.title, 'size': props[0].data.children[0].data.score / 100}
+    rootNode = {'root': true, 'name': props[0].data.children[0].data.title, 'size': props[0].data.children[0].data.score}
     
     function parse(children) {
       var nodeArray = [];
@@ -93,7 +93,10 @@ const force = {
         .on('mouseout', tip.hide)
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
-        .attr("r", function(d) { return 3 + Math.sqrt(d.size) || 3; })
+        .attr("r", function(d) { 
+          if (!d.root) return 3 + Math.sqrt(d.size) || 3; 
+          else return 3 + Math.sqrt(d.size/100);
+        })
         .style("fill", this.color)
         .style("opacity",0.8)
         .on("click", function(d){

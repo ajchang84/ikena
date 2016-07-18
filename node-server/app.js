@@ -81,8 +81,12 @@ app.get('/', function(req, res) {
 });
 
 app.get('/api/isAuth', function(req, res) {
-  if (req.isAuthenticated()) res.json( {'isAuth': true} );
+  if (req.isAuthenticated()) res.json( {'isAuth': true, 'profile': req.user} );
   else res.json( {'isAuth': false} )
+})
+
+app.get('/api/profile', function(req, res) {
+  if (req.isAuthenticated()) res.json( {'profile': req.user} );
 })
 
 app.get('*', function(req, res) {

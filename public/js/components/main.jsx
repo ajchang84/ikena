@@ -1,22 +1,32 @@
+
+var Router = ReactRouter.Router
+var browserHistory = ReactRouter.browserHistory
+var Route = ReactRouter.Route
+var Link = ReactRouter.Link
+
 var Nav = React.createClass({
+  loadSub(event){
+    this.props.loadSub(event.target.innerHTML)
+  },
+
   render(){
     if (this.props.signedIn.isAuth) {
-      var log = <a href='/auth/logout'>Logout</a>
+      var log = <a href='/auth/logout'>Hi, {this.props.signedIn.profile.name}!</a>
     } 
     else if (!this.props.signedIn.isAuth) {
       var log = <a href='/auth/reddit'>Sign In</a>
     }
     return (
       <div id="favorite">
-        <div className='leftBlock'>FRONT</div>
-        <div className='leftBlock'>ASKREDDIT</div>
-        <div className='leftBlock'>FUNNY</div>
-        <div className='leftBlock'>IAMA</div>
-        <div className='leftBlock'>WORLDNEWS</div>
-        <div className='leftBlock'>PICS</div>
-        <div className='leftBlock'>TODAYILEARNED</div>
-        <div className='leftBlock'>NEWS</div>
-        <div className='leftBlock'>GAMING</div>
+        <Link to={`/front`}><div className='leftBlock' onClick={this.loadSub}>FRONT</div></Link>        
+        <Link to={`/askreddit`}><div className='leftBlock' onClick={this.loadSub}>ASKREDDIT</div></Link>
+        <Link to={`/funny`}><div className='leftBlock' onClick={this.loadSub}>FUNNY</div></Link>
+        <Link to={`/iama`}><div className='leftBlock' onClick={this.loadSub}>IAMA</div></Link>
+        <Link to={`/worldnews`}><div className='leftBlock' onClick={this.loadSub}>WORLDNEWS</div></Link>
+        <Link to={`/pics`}><div className='leftBlock' onClick={this.loadSub}>PICS</div></Link>
+        <Link to={`/todayilearned`}><div className='leftBlock' onClick={this.loadSub}>TODAYILEARNED</div></Link>
+        <Link to={`/news`}><div className='leftBlock' onClick={this.loadSub}>NEWS</div></Link>
+        <Link to={`/gaming`}><div className='leftBlock' onClick={this.loadSub}>GAMING</div></Link>
         <div className="rightBlock">
           {log}
         </div>
@@ -93,7 +103,6 @@ var PostsBox = React.createClass({
     }
     return (
       <div id="postBox" style={divStyle}>
-        <Category />
         <div>{posts}</div>
       </div>
     )
@@ -230,13 +239,6 @@ var Post = React.createClass({
   )}
 });
 
-var Category = React.createClass({
-  render(){
-    return (
-      <p className="lead">All Posts</p>
-  )}
-});
-
 var ThreadBox = React.createClass({
 
   render(){
@@ -259,7 +261,7 @@ var ThreadBox = React.createClass({
         )  
       }      
     }
-    return <div id='threadBox'><img className='loading' src='../images/loading.gif'/></div>
+    return <div id='threadBox' className='Aligner'><img className='loading' src='../images/loading.gif'/></div>
   }
 })
 
@@ -286,22 +288,44 @@ var Content = React.createClass({
     console.log(this.props.content.url)
     // if split is not on, add a back button to navigate back
     if (!this.props.split) {
-      var backButton = <button className='btn btn-default' onClick={this.backButton}>Back</button>
+      var backButton = <input className='imageButton' type="image" src="../images/back.png" />
     }
     if (this.state.commentWeb) {
       var dialogueDiv = <Force comments={this.props.comments} remove={this.remove} />
     }
+
+    if (this.props.content.selftext) {
+      var display = <p>{this.props.content.selftext}</p>
+    }
+      else if (/imgur.com/.test(this.props.content.url) && this.props.content.preview) {
+      var display = <img src={this.props.content.url +".gif"} />
+    } else if (/.gifv/.test(this.props.content.url)) {
+      var display = <iframe class="imgur-embed" width="100%" height="100%" frameborder="0" src={this.props.content.url}></iframe>
+    } else if (!this.props.content.preview) {
+      var display = <p><a href={this.props.content.url} target="_blank">Link to article</a></p>
+    } else if (this.props.content.preview && !/imgur.com/.test(this.props.content.url)) {
+      var display = <p><a href={this.props.content.url} target="_blank">Link to article</a></p>
+    }
+
+
     return (
       <div id='content'>
         {dialogueDiv}
-        <div className='contentHead'>
-          {backButton}
-          <h3>{this.props.content.title}<a onClick={this.commentWeb}>O</a></h3>
+        <div>
+          <div className='left'>
+            <div className='contentHead'>
+              <h3>{backButton} {this.props.content.title}</h3>
+            </div>
+            <div className='author'>{this.props.content.author}</div>
+          </div>
+          <div className='right'>
+            <a onClick={this.commentWeb}>
+              <img className='forceButton' src='../images/force.png' />
+            </a>
+          </div>
         </div>
-        <div className='author'>{this.props.content.author}</div>
-        <div className='score'>{this.props.content.score}</div>
         <div id='display'>
-          <img src={this.props.content.url} />
+          {display}
         </div>
       </div>
     )
@@ -364,7 +388,10 @@ var Force = React.createClass({
   },
   render(){
     return (
-      <div id="force"><a onClick={this.props.remove}>Back</a></div>
+      <div>
+      <div id='cover'></div>
+      <div id="force"><button onClick={this.props.remove}>Back</button></div>
+      </div>
     )
   }
 })
@@ -408,7 +435,8 @@ var Root = React.createClass({
       thread: null,
       bubble: false,
       split: false,
-      sub: 'front'
+      sub: 'front',
+      profile: null
     }
   },
   componentWillMount(){
@@ -416,8 +444,6 @@ var Root = React.createClass({
     $.getJSON('https://www.reddit.com/.json?limit=50').done(function(data) {
       console.log('API call for posts')
       var firstData = data.data.children
-        // this.setState({
-        // })
       $.getJSON('/api/isAuth').done(function(res){
         this.setState({
           isAuth: res,
@@ -435,6 +461,7 @@ var Root = React.createClass({
     //     })
     //   }.bind(this),"json");  
     // }.bind(this),10000)
+  // },
   },
   updateToggleBubble(){
     // update state
@@ -458,12 +485,22 @@ var Root = React.createClass({
     });
   },
   loadSub(sub){
-    $.getJSON('http://www.reddit.com/r/' + sub +'.json').done(function(data){
-      this.setState({
-        sub: sub,
-        posts: data.data.children,
-      })
-    }.bind(this),"json")
+    if (sub === 'FRONT') {
+     $.getJSON('https://www.reddit.com/.json?limit=50').done(function(data){
+       this.setState({
+         sub: 'front',
+         posts: data.data.children,
+       })
+     }.bind(this),"json") 
+    }
+    else {
+      $.getJSON('http://www.reddit.com/r/' + sub +'.json').done(function(data){
+        this.setState({
+          sub: sub.toLowerCase(),
+          posts: data.data.children,
+        })
+      }.bind(this),"json")   
+    }
   },
   threadState(id){
     this.setState({
@@ -535,7 +572,7 @@ var Root = React.createClass({
     if (this.state.posts) {
       return (
         <div>
-          <Nav signedIn={this.state.isAuth}/>
+          <Nav signedIn={this.state.isAuth} loadSub={this.loadSub}/>
           <Dash 
             toggleBubble={this.updateToggleBubble}
             toggleSplit={this.updateToggleSplit}
@@ -545,11 +582,13 @@ var Root = React.createClass({
         </div>
       )     
     }
-    return <div><img className='loading' src='../images/loading.gif'/></div>
+    return <div className='Aligner'><img className='loading' src='../images/loading.gif'/></div>
   }
 });   
 
-ReactDOM.render(
-  <Root />, 
-  document.getElementById("root")
-);
+ReactDOM.render((
+  <Router history={browserHistory}>
+    <Route path="/" component={Root}>
+    </Route>
+  </Router>
+), document.getElementById("root"));
