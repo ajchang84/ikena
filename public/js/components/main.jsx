@@ -475,7 +475,7 @@ var Root = React.createClass({
     if (!this.state.thread) {
       var id = this.state.posts[0].data.id
       console.log('API call for thread ', id)
-      $.getJSON('http://www.reddit.com/' + id +'.json').done(function(data){
+      $.getJSON('https://www.reddit.com/' + id +'.json').done(function(data){
         this.setState({
           thread: data,
         })
@@ -495,7 +495,7 @@ var Root = React.createClass({
      }.bind(this),"json") 
     }
     else {
-      $.getJSON('http://www.reddit.com/r/' + sub +'.json').done(function(data){
+      $.getJSON('https://www.reddit.com/r/' + sub +'.json').done(function(data){
         this.setState({
           sub: sub.toLowerCase(),
           posts: data.data.children,
@@ -507,7 +507,7 @@ var Root = React.createClass({
     this.setState({
       thread: null
     })
-    $.getJSON('http://www.reddit.com/' + id + '.json').done(function(data){
+    $.getJSON('https://www.reddit.com/' + id + '.json').done(function(data){
       this.setState({
         thread: data,
       })
