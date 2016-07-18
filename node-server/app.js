@@ -16,6 +16,10 @@ app.use(express.static(__dirname + '/../public'));
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views')
 
+if(process.env.NODE_ENV !== "production"){
+  require('dotenv').load();
+}
+
 app.use(session({
   name: 'session',
   keys: [process.env['SECRET']]
