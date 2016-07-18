@@ -178,7 +178,8 @@ var Post = React.createClass({
         thumbnail = <div className='thumbnails nsfw'>NSFW</div> 
       }
       else {
-        thumbnail = <img className='thumbnails' src={this.props.thumbnail} />
+        thumbnail = this.props.thumbnail.replace(/http/,'https')
+        thumbnail = <img className='thumbnails' src={thumbnail} />
       }
     } else thumbnail = <div className='thumbnails text'>Text</div> 
 
