@@ -40,7 +40,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new RedditStrategy({
     clientID: process.env['REDDIT_CONSUMER_KEY'],
     clientSecret: process.env['REDDIT_CONSUMER_SECRET'],
-    callbackURL: "http://localhost:3000/auth/reddit/callback",
+    callbackURL: "https://ikena.herokuapp.com/auth/reddit/callback",
     scope: ['identity', 'edit', 'flair', 'history', 'modconfig',
             'modflair', 'modlog', 'modposts', 'modwiki', 'mysubreddits',
             'privatemessages', 'read', 'report', 'save', 'submit', 
@@ -61,20 +61,20 @@ passport.use(new RedditStrategy({
   //   console.log(body)
   // });
 
-    knex('users').where({redditId: profile.id}).first().then((user) =>{
-      if (!user) {
-        knex('users').insert({redditId: profile.id}).then(function(user){
-          user.access_token = accessToken;
-          user.name = profile.name;
-          return done(null, user);
-        });
-      }
-      else {
+    // knex('users').where({redditId: profile.id}).first().then((user) =>{
+    //   if (!user) {
+    //     knex('users').insert({redditId: profile.id}).then(function(user){
+    //       user.access_token = accessToken;
+    //       user.name = profile.name;
+    //       return done(null, user);
+    //     });
+    //   }
+    //   else {
         user.access_token = accessToken;
         user.name = profile.name;
         return done(null, user);
-      }
-    })
+    //   }
+    // })
   }
 ));
 
