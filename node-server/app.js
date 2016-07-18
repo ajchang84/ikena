@@ -12,9 +12,9 @@ var Route = require('react-router').Route
 var hashHistory = require('react-router').hashHistory
 var Link = require('react-router').Link
 
-
 app.use(express.static(__dirname + '/../public'));
 app.set('view engine', 'pug');
+app.set('views', __dirname + '/views')
 
 app.use(session({
   name: 'session',
