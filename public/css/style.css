@@ -60,6 +60,14 @@ svg {
   transform: translate(-50%);
 }
 
+.commentBody p {
+  font-family: 'Varela Round', sans-serif;
+}
+
+.author div {
+  font-family: 'Varela Round', sans-serif;
+}
+
 #logo {
   position: absolute;
   float: left;
