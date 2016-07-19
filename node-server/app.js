@@ -61,20 +61,20 @@ passport.use(new RedditStrategy({
   //   console.log(body)
   // });
 
-    // knex('users').where({redditId: profile.id}).first().then((user) =>{
-    //   if (!user) {
-    //     knex('users').insert({redditId: profile.id}).then(function(user){
-    //       user.access_token = accessToken;
-    //       user.name = profile.name;
-    //       return done(null, user);
-    //     });
-    //   }
-    //   else {
+    knex('users').where({redditId: profile.id}).first().then((user) =>{
+      if (!user) {
+        knex('users').insert({redditId: profile.id}).then(function(user){
+          user.access_token = accessToken;
+          user.name = profile.name;
+          return done(null, user);
+        });
+      }
+      else {
         user.access_token = accessToken;
         user.name = profile.name;
         return done(null, user);
-    //   }
-    // })
+      }
+    })
   }
 ));
 
