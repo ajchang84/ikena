@@ -1,7 +1,7 @@
 const force = {
   create(props) {
     var width = 960,
-        height = 960,
+        height = 660,
         rootNode ={};
 
     var svg = d3.select("#force").append("svg")
@@ -49,7 +49,7 @@ const force = {
     }
 
     var force = d3.layout.force()
-        .size([960, 960])
+        .size([960, 660])
         .on("tick", tick)
     svg.call(tip);
 
@@ -62,6 +62,7 @@ const force = {
     force
         .nodes(nodes)
         .links(links)
+        .linkDistance(2)
         .charge(-100)
         .start();
 

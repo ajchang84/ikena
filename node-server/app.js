@@ -40,11 +40,9 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new RedditStrategy({
     clientID: process.env['REDDIT_CONSUMER_KEY'],
     clientSecret: process.env['REDDIT_CONSUMER_SECRET'],
+    // callbackURL: "https://localhost:3000/auth/reddit/callback",
     callbackURL: "https://ikena.herokuapp.com/auth/reddit/callback",
-    scope: ['identity', 'edit', 'flair', 'history', 'modconfig',
-            'modflair', 'modlog', 'modposts', 'modwiki', 'mysubreddits',
-            'privatemessages', 'read', 'report', 'save', 'submit', 
-            'subscribe', 'vote', 'wikiedit', 'wikiread']
+    scope: ['identity', 'history', 'read', 'vote']
   },
   function(accessToken, refreshToken, profile, done) {
   // console.log(accessToken)

@@ -27,7 +27,7 @@ var Nav = React.createClass({
         <Link to={`/todayilearned`}><div className='leftBlock' onClick={this.loadSub}>TODAYILEARNED</div></Link>
         <Link to={`/news`}><div className='leftBlock' onClick={this.loadSub}>NEWS</div></Link>
         <Link to={`/gaming`}><div className='leftBlock' onClick={this.loadSub}>GAMING</div></Link>
-        <Link to={`/about`}><div className='leftBlock'>about</div></Link>
+        <Link to={`/about`}><div className='rightBlock'>about</div></Link>
         <div className="rightBlock">
           {log}
         </div>
@@ -170,19 +170,19 @@ var Post = React.createClass({
     var thumbnail;
     if (this.props.thumbnail) {
       if (this.props.thumbnail === 'self') {
-        thumbnail = <div className='thumbnails self'>Self</div> 
+        thumbnail = <div className='thumbnails self'><p>Self</p></div> 
       } 
       else if (this.props.thumbnail === 'default') {
-        thumbnail = <div className='thumbnails default'>Link</div> 
+        thumbnail = <div className='thumbnails default'><p>Link</p></div> 
       }
       else if (this.props.thumbnail === 'nsfw') {
-        thumbnail = <div className='thumbnails nsfw'>NSFW</div> 
+        thumbnail = <div className='thumbnails nsfw'><p>NSFW</p></div> 
       }
       else {
         thumbnail = this.props.thumbnail.replace(/http/,'https')
         thumbnail = <img className='thumbnails' src={thumbnail} />
       }
-    } else thumbnail = <div className='thumbnails text'>Text</div> 
+    } else thumbnail = <div className='thumbnails text'><p>Text</p></div> 
 
 
     if (this.state.upvoted) {
@@ -299,11 +299,12 @@ var Content = React.createClass({
 
     if (this.props.content.selftext) {
       var display = <p>{this.props.content.selftext}</p>
-    }
-      else if (/imgur.com/.test(this.props.content.url) && this.props.content.preview) {
-      var display = <img src={this.props.content.url +".gif"} />
     } else if (/.gifv/.test(this.props.content.url)) {
       var display = <iframe class="imgur-embed" width="100%" height="100%" frameborder="0" src={this.props.content.url}></iframe>
+    } else if (/imgur.com/.test(this.props.content.url) && this.props.content.preview) {
+      var display = <img src={this.props.content.url +".gif"} />
+    } else if (/.jpg/.test(this.props.content.url)) {
+      var display = <img src={this.props.content.url} />
     } else if (!this.props.content.preview) {
       var display = <p><a href={this.props.content.url} target="_blank">Link to article</a></p>
     } else if (this.props.content.preview && !/imgur.com/.test(this.props.content.url)) {
@@ -319,7 +320,7 @@ var Content = React.createClass({
             <div className='contentHead'>
               <h3>{backButton} {this.props.content.title}</h3>
             </div>
-            <div className='author'>{this.props.content.author}</div>
+            <div className='author'><p>by {this.props.content.author}</p></div>
           </div>
           <div className='right'>
             <a onClick={this.commentWeb}>
@@ -340,16 +341,27 @@ var Comments = React.createClass({
     var comments = '';
       comments = this.props.comments.map(function(comment, index) {
         var divStyle = {
-          backgroundColor: this.props.tier % 2 === 0 ? '#f0f0f0' : 'white'
+          borderColor: this.props.tier === 1 ? '#7EB57D' : 
+                       this.props.tier === 2 ? '#FF9900' :
+                       this.props.tier === 3 ? '#569EC9' :
+                       this.props.tier === 4 ? '#FF0000' :
+                       this.props.tier === 5 ? '#a500ff' : '#a500ff'
+        } 
+        var headStyle = {
+          backgroundColor: this.props.tier === 1 ? '#F9FCF9' : 
+                           this.props.tier === 2 ? '#FFFAF3' :
+                           this.props.tier === 3 ? '#F7FBFD' :
+                           this.props.tier === 4 ? '#fff7f7' :
+                           this.props.tier === 5 ? '#fbf7ff' : '#fbf7ff'
         }
         if (comment.kind !== 'more') {
-          if (comment.data.replies/* && this.props.tier < 3*/) {
+          if (comment.data.replies && this.props.tier < 5) {
             var tier = this.props.tier;
             tier++;
             return (
               <div className= 'comment' style={divStyle} key={index}>
-                  <div className= 'commentHead'>
-                    <div className='author'>{comment.data.author}</div>
+                  <div className= 'commentHead' style={headStyle}>
+                    <div className='author'><p>{comment.data.author}</p></div>
                     <div className='score'>{comment.data.score}</div>
                   </div>
                 <div className= 'commentBody'>
@@ -365,7 +377,7 @@ var Comments = React.createClass({
           else {
               return (
                 <div className= 'comment' style={divStyle} key={index}>
-                  <div className= 'commentHead'>
+                  <div className= 'commentHead' style={headStyle}>
                     <div className='author'>{comment.data.author}</div>
                     <div className='score'>{comment.data.score}</div>
                   </div>
