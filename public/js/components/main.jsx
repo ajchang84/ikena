@@ -463,8 +463,7 @@ var Root = React.createClass({
     //       posts: data.data.children
     //     })
     //   }.bind(this),"json");  
-    // }.bind(this),10000)
-  // },
+    // }.bind(this),1000)
   },
   updateToggleBubble(){
     // update state
