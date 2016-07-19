@@ -46,7 +46,8 @@ var Dash = React.createClass({
   render(){
     return (
       <div id="dash" className='container-fluid'>
-        <h2 id="subreddit" className='lead'>{this.props.subreddit}</h2>
+        <div id='logo'><a href='/'><h2 className='lead'>Ikena</h2></a></div>
+        <h2 id="subreddit" className='text-center lead'>{this.props.subreddit}</h2>
         <div id="switches">
           <div className='switch'>
             <img className='icon' src={'../images/bubble.png'} />
@@ -496,7 +497,7 @@ var Root = React.createClass({
      }.bind(this),"json") 
     }
     else {
-      $.getJSON('https://www.reddit.com/r/' + sub +'.json').done(function(data){
+      $.getJSON('https://www.reddit.com/r/' + sub +'.json?limit=50').done(function(data){
         this.setState({
           sub: sub.toLowerCase(),
           posts: data.data.children,

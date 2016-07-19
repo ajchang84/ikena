@@ -1,3 +1,7 @@
+a:hover, a:visited, a:link, a:active {
+  text-decoration: none;
+}
+
 body {
   font-family: 'Open Sans',sans-serif;
   font-weight: 400;
@@ -50,8 +54,22 @@ svg {
 
 #subreddit {
   display: inline-block;
-  font-size: 50px;
-  margin-top: 0px;
+  font-size: 35px;
+  margin-top: 12px;
+  margin-left: 50%;
+  transform: translate(-50%);
+}
+
+#logo {
+  position: absolute;
+  float: left;
+}
+
+#logo h2 {
+  margin-top: 8px;
+  font-size: 40px;
+  font-weight: 800;
+  color: #596981;
 }
 
 #postBox {
