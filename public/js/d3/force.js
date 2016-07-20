@@ -118,10 +118,10 @@ const force = {
   // Color leaf nodes orange, and packages white or blue.
   color(d) {
     return d._children ? "#3182bd"
-            : d.root ? 'black' 
+            : d.root ? '#2196F3' 
             : d.children 
               ? d.size < 1 ? "red" : "#c6dbef" 
-            : "#fd8d3c";
+            : "#c6dbef";
   },
 
   // Returns a list of all nodes under the root.

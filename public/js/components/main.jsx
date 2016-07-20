@@ -44,10 +44,14 @@ var Dash = React.createClass({
     this.props.toggleSplit()
   },
   render(){
+    if (this.props.subreddit === 'front') {
+      var style = {
+        display: 'none'
+      }
+    }
     return (
       <div id="dash" className='container-fluid'>
         <div id='logo'><a href='/'><h2 className='lead'>Ikena</h2></a></div>
-        <h2 id="subreddit" className='text-center lead'>{this.props.subreddit}</h2>
         <div id="switches">
           <div className='switch'>
             <img className='icon' src={'../images/bubble.png'} />
@@ -78,12 +82,43 @@ var Dash = React.createClass({
 });
 
 var PostsBox = React.createClass({
+  getInitialState(){
+    return {
+      votes: null
+    }
+  },
   loadPost(id){
     this.props.updatePost(id)
+  },
+  componentWillMount(){
+
+    // if (this.props.signedIn.isAuth) {
+      $.getJSON('/api/history').done(function(data) {
+        var hash ={};
+        data.forEach(function(post){
+          hash[post.post] = post.upvoted;
+        })
+        this.setState({
+          votes: hash
+        })
+      }.bind(this))
+    // }
   },
   render(){
     var posts = [];
     this.props.posts.forEach(function(post, index) {
+      var upvoted;
+      var downvoted;
+      if (this.state.votes && this.state.votes[post.data.id]) {
+        upvoted = true;
+        downvoted = false;
+      } else if (this.state.votes && this.state.votes[post.data.id]===false) {
+        upvoted = false;
+        downvoted = true;
+      } else {
+        upvoted = null;
+        downvoted = null;
+      };
       posts.push(
         <Post 
           title={post.data.title} 
@@ -94,6 +129,8 @@ var PostsBox = React.createClass({
           num_comments={post.data.num_comments}
           handleClick={this.loadPost}
           loadSub={this.props.loadSub}
+          upvoted={upvoted}
+          downvoted={downvoted}
           key={index}
         />
       );
@@ -114,12 +151,17 @@ var PostsBox = React.createClass({
 var Post = React.createClass({
   getInitialState(){
     return {
-      upvoted: false,
-      downvoted: false,
+      upvoted: null,
+      downvoted: null,
       score: this.props.score
     }
   },
-
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      upvoted: nextProps.upvoted,
+      downvoted: nextProps.downvoted
+    })
+  },
   // click post to load the post comment thread
   loadPost(){
     this.props.handleClick(this.props.id)
@@ -131,7 +173,9 @@ var Post = React.createClass({
 
   // handle upvote
   upvote(){
-    if (!this.state.downvoted && !this.state.upvoted) {
+    if (this.state.downvoted === null && this.state.upvoted === null) {
+      $.getJSON('/api/upvote/' + this.props.id).done(function(data) {
+      }.bind(this))
       this.setState({
         upvoted: true,
         downvoted: false,
@@ -139,6 +183,8 @@ var Post = React.createClass({
       })
     } 
     else if (this.state.downvoted && !this.state.upvoted) {
+      $.getJSON('/api/upvoteupdate/' + this.props.id).done(function(data) {
+      }.bind(this))
       this.setState({
         upvoted: true,
         downvoted: false,
@@ -149,7 +195,9 @@ var Post = React.createClass({
 
   // handle downvote
   downvote(){
-    if (!this.state.upvoted && !this.state.downvoted) {
+    if (this.state.upvoted === null && this.state.downvoted === null) {
+      $.getJSON('/api/downvote/' + this.props.id).done(function(data) {
+      }.bind(this))
       this.setState({
         upvoted: false,
         downvoted: true,
@@ -157,6 +205,8 @@ var Post = React.createClass({
       })    
     }
     else if (this.state.upvoted && !this.state.downvoted) {
+      $.getJSON('/api/downvoteupdate/' + this.props.id).done(function(data) {
+      }.bind(this))
       this.setState({
         upvoted: false,
         downvoted: true,
@@ -170,19 +220,19 @@ var Post = React.createClass({
     var thumbnail;
     if (this.props.thumbnail) {
       if (this.props.thumbnail === 'self') {
-        thumbnail = <div className='thumbnails self'><p>Self</p></div> 
+        thumbnail = <div onClick={this.loadPost} className='thumbnails self'><p>Self</p></div> 
       } 
       else if (this.props.thumbnail === 'default') {
-        thumbnail = <div className='thumbnails default'><p>Link</p></div> 
+        thumbnail = <div onClick={this.loadPost} className='thumbnails default'><p>Link</p></div> 
       }
       else if (this.props.thumbnail === 'nsfw') {
-        thumbnail = <div className='thumbnails nsfw'><p>NSFW</p></div> 
+        thumbnail = <div onClick={this.loadPost} className='thumbnails nsfw'><p>NSFW</p></div> 
       }
       else {
         thumbnail = this.props.thumbnail.replace(/http/,'https')
-        thumbnail = <img className='thumbnails' src={thumbnail} />
+        thumbnail = <img onClick={this.loadPost} className='thumbnails' src={thumbnail} />
       }
-    } else thumbnail = <div className='thumbnails text'><p>Text</p></div> 
+    } else thumbnail = <div onClick={this.loadPost} className='thumbnails text'><p>Text</p></div> 
 
 
     if (this.state.upvoted) {
@@ -231,7 +281,7 @@ var Post = React.createClass({
               </p>
             </div>
             <div className='list'>
-              <p>
+              <p className='comments'>
                 <span className="glyphicon glyphicon-comment" aria-hidden="true" />
                 {' ' + this.props.num_comments} 
               </p>
@@ -264,7 +314,7 @@ var ThreadBox = React.createClass({
         )  
       }      
     }
-    return <div id='threadBox' className='Aligner'><img className='loading' src='../images/loading.gif'/></div>
+    return <div id='threadBox' className='AlignerA'><img className='loading' src='../images/loading.gif'/></div>
   }
 })
 
@@ -563,7 +613,7 @@ var Root = React.createClass({
     // Standard view with split posts and comment thread
     else if (!this.state.bubble && this.state.split) {
       view = [
-        <PostsBox key='0' posts={this.state.posts} updatePost={this.threadState} split={true}/>, 
+        <PostsBox key='0' posts={this.state.posts} signedIn={this.state.isAuth} updatePost={this.threadState} split={true}/>, 
         <ThreadBox key='1' thread={this.state.thread} split={true}/>
       ]
     }
@@ -574,6 +624,7 @@ var Root = React.createClass({
         view = <PostsBox posts={this.state.posts} 
                          updatePost={this.threadState}
                          loadSub={this.loadSub}
+                         signedIn={this.state.isAuth}
                         />     
       }
       else if (this.state.thread) {
@@ -603,19 +654,18 @@ var Root = React.createClass({
 
 var About = React.createClass({
   render(){
-    return (<div>
+    return (<div className='container-fluid'>
       <div className="panel panel panel-default">
         <div className="panel-heading"> 
-          <div className="panel-default">About Vision Therapy Online™</div>
+          <div className="panel-default">About Ikena™</div>
         </div>
-        <div className="desc">We had a dream of providing high-quality, cost-effective vision therapy that any patient could access at home. A group of web developers with a background in vision founded Vision Therapy Online like last week. More than 3 days later, we offer world-className products and services that connect patients with their eyecare professionals, as well as extend access to quality healthcare.</div>
+        <div className="desc">Uses Reddit for Vis</div>
       </div>
       <div className="panel panel panel-default">
         <div className="panel-heading">
-          <div className="panel-default">Meet The Founders</div>
+          <div className="panel-default">Technologies used</div>
         </div>
-        <div className="desc"> <img src="/images/meetTheDevs.jpg" alt="picture of the founders"/></div>
-        <div className="desc">VTO was founded by Alex Chang, Katie Low, and Gunther Schneider</div>
+        <div className="desc">React</div>
       </div>
     </div>)
   }

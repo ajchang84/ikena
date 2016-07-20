@@ -3,7 +3,7 @@ a:hover, a:visited, a:link, a:active {
 }
 
 body {
-  font-family: 'Open Sans',sans-serif;
+  font-family: 'Varela Round', sans-serif;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
@@ -103,7 +103,8 @@ div.author p {
   margin-left: 20px;
   border: solid 1px #f0f0f0;
   border-radius: 10px;
-
+  cursor:pointer;
+  cursor:hand;
 }
 
 .forceButton:hover {
@@ -144,7 +145,9 @@ div.posts:hover {
   border-radius: 10px;
   margin-right: 1em;
   float: left;
-  line-height: 70px
+  line-height: 70px;
+  cursor:pointer;
+  cursor:hand;
 }
 
 .Aligner {
@@ -152,7 +155,14 @@ div.posts:hover {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  width: 100vh;
+}
+
+.AlignerA {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+  width: 49%;
 }
 
 .imageButton {
@@ -229,17 +239,34 @@ p {
 }
 
 p.title {
-  font-weight: 900;
+  font-family: 'Varela Round', sans-serif; 
+  font-weight: 800; 
+  cursor:pointer;
+  cursor:hand;
 }
 
 p.subreddit {
   font-weight: 200;
   font-size: 12px;
   margin-bottom: 4px;
+  cursor:pointer;
+  cursor:hand;
+}
+
+.glyphicon-triangle-top, .glyphicon-triangle-bottom {
+  cursor:pointer;
+  cursor:hand;
+  color:#CCCCCC;
 }
 
 .score {
-  font-weight: 300;
+  font-weight: 800;
+  color:#CCCCCC;
+}
+
+p.comments {
+  font-weight: 800;
+  color:#CCCCCC;
 }
 
 div.comment {
@@ -262,6 +289,10 @@ div.comment {
 
 #content {
   margin: 50px;
+}
+
+#content p {
+  font-family: 'Varela Round', sans-serif;
 }
 
 .author {
