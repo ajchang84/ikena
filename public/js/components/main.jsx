@@ -350,18 +350,18 @@ var Content = React.createClass({
     if (this.props.content.selftext) {
       var display = <p>{this.props.content.selftext}</p>
     } else if (/.gifv/.test(this.props.content.url)) {
-      var display = <iframe class="imgur-embed" width="100%" height="100%" frameborder="0" src={this.props.content.url}></iframe>
-    } else if (/imgur.com/.test(this.props.content.url) && this.props.content.preview) {
-      var display = <img src={this.props.content.url +".gif"} />
+      var display = <p><a href={this.props.content.url} target="_blank">Link to article</a></p>
+    } else if (/.gif/.test(this.props.content.url)) {
+      var display = <img src={this.props.content.url} />
     } else if (/.jpg/.test(this.props.content.url)) {
       var display = <img src={this.props.content.url} />
     } else if (!this.props.content.preview) {
       var display = <p><a href={this.props.content.url} target="_blank">Link to article</a></p>
     } else if (this.props.content.preview && !/imgur.com/.test(this.props.content.url)) {
       var display = <p><a href={this.props.content.url} target="_blank">Link to article</a></p>
+    } else {
+      var display = <p><a href={this.props.content.url} target="_blank">Link to article</a></p>
     }
-
-
     return (
       <div id='content'>
         {dialogueDiv}
