@@ -3,7 +3,7 @@
 Description
 --
 
-This site allows a cleaner browsing experience in Reddit. Included are fun visualization of the comment tree using D3 force layout.
+[This site](https://ikena.herokuapp.com/) allows a cleaner browsing experience in Reddit. Included are fun visualization of the comment tree using D3 force layout.
 
 ![Alt text](/public/images/example.png?raw=true "screenshot")
 
