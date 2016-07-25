@@ -1,8 +1,3 @@
-var Router = ReactRouter.Router
-var browserHistory = ReactRouter.browserHistory
-var Route = ReactRouter.Route
-var Link = ReactRouter.Link
-
 var d3Chart = {};
 
 // create svg on el

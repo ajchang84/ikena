@@ -38,7 +38,6 @@ const force = {
     })
 
     function tick() {
-      console.log('ticking')
       link.attr("x1", function(d) { return d.source.x; })
           .attr("y1", function(d) { return d.source.y; })
           .attr("x2", function(d) { return d.target.x; })
@@ -115,7 +114,7 @@ const force = {
         .call(force.drag);
   },
 
-  // Color leaf nodes orange, and packages white or blue.
+  // Color nodes with negative upvotes red, the rest blue
   color(d) {
     return d._children ? "#3182bd"
             : d.root ? '#2196F3' 

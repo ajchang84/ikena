@@ -1,3 +1,4 @@
+// Reddit OAuth
 const express = require('express');
 const router = express.Router();
 const session = require('cookie-session');
@@ -14,7 +15,6 @@ router.get('/reddit', function(req, res, next){
 });
 
 router.get('/reddit/callback', function(req, res, next){
-
   if (req.query.state == req.session.state){
     passport.authenticate('reddit', {
       successRedirect: '/',
@@ -25,14 +25,6 @@ router.get('/reddit/callback', function(req, res, next){
     next( new Error(403) );
   }
 });
-
-router.get('/success', function(req, res) {
-  res.send('success')
-})
-
-router.get('/token', function(req,res){
-  res.json(req.user)
-})
 
 router.get('/logout', function(req, res){
   req.logout();
