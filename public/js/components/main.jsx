@@ -85,7 +85,6 @@ var Dash = React.createClass({
                 type="checkbox" 
                 value="split" 
                 onChange={this.toggleSplit}
-                checked
               />
               <div className="slider round"></div>
             </label>
