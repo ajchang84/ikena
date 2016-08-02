@@ -85,6 +85,7 @@ var Dash = React.createClass({
                 type="checkbox" 
                 value="split" 
                 onChange={this.toggleSplit}
+                checked
               />
               <div className="slider round"></div>
             </label>
@@ -278,7 +279,7 @@ var Post = React.createClass({
     }
     // render Post component
     return (
-      <div className='posts clearfix'>
+      <div className='posts clearfix' onClick={this.loadPost}>
         <div className='post-col-left'>
           {thumbnail}
         </div>
@@ -537,22 +538,41 @@ var Root = React.createClass({
       posts: null,
       thread: null,
       bubble: false,
-      split: false,
+      split: true,
       sub: 'front',
       profile: null
     }
   },
   // set this authorization state and the post list state after API call resolves
   componentWillMount(){
-    $.getJSON('https://www.reddit.com/.json?limit=50').done(function(data) {
-      var firstData = data.data.children
-      $.getJSON('/api/isAuth').done(function(res){
+    // $.getJSON('https://www.reddit.com/.json?limit=50').done(function(data) {
+    //   var firstData = data.data.children
+    //   $.getJSON('/api/isAuth').done(function(res){
+    //     this.setState({
+    //       isAuth: res,
+    //       posts: firstData
+    //     })
+    //   }.bind(this))
+    // }.bind(this),"json")  
+    $.getJSON('https://www.reddit.com/.json?limit=50')
+      .then(function(data){
         this.setState({
-          isAuth: res,
-          posts: firstData
+          posts: data.data.children
+        })
+        var id = this.state.posts[0].data.id
+        return $.getJSON('https://www.reddit.com/' + id +'.json')
+      }.bind(this))
+      .then(function(data){
+        this.setState({
+          thread: data
+        })
+        return $.getJSON('/api/isAuth')      
+      }.bind(this))
+      .then(function(res){
+        this.setState({
+          isAuth: res
         })
       }.bind(this))
-    }.bind(this),"json")  
   },
   // toggles between bubble or standard view of list of posts
   updateToggleBubble(){
