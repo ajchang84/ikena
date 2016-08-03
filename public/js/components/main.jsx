@@ -193,7 +193,7 @@ var Post = React.createClass({
     this.props.loadSub(this.props.subreddit)
   },
 
-  // handle upvoing
+  // handle upvoting
   upvote(){
     if (this.state.downvoted === null && this.state.upvoted === null) {
       $.getJSON('/api/upvote/' + this.props.id).done(function(data) {
@@ -295,6 +295,7 @@ var Post = React.createClass({
                 <span className='score' style={scoreStyle}>
                   {this.state.score + ' '}
                 </span>
+                {/*
                 <span className="glyphicon glyphicon-triangle-top" aria-hidden="true"
                       onClick={this.upvote}
                       style={upvoteStyle}
@@ -303,6 +304,7 @@ var Post = React.createClass({
                       onClick={this.downvote}
                       style={downvoteStyle}
                 />
+                */}
               </p>
             </div>
             <div className='list'>
