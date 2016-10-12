@@ -10,7 +10,7 @@ Description
 Technologies Used
 --
 <img src="http://www.myintervals.com/blog/wp-content/uploads/2011/12/postgresql-logo1.png" alt="postgressql" width="100" height="100">
-<img src="http://blog.tryolabs.com/wp-content/uploads/2015/04/logo-578x270.png" alt="react" height="100">
+<img src="https://cdn.auth0.com/blog/react-js/react.png" alt="react" height="100">
 <img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcT29KTHfYpV97Xy0KfOjc83PerxvTXQ4KtbnDFuddt0I4xkji-9QDZG4w" alt="js" width="100" height="100">
 <img src="https://winio.herokuapp.com/images/jquery.png" alt="jquery" width="100" height="100">
 <img src="https://avatars0.githubusercontent.com/u/9338635?v=3&s=400" alt="jade" width="100" height="100">
